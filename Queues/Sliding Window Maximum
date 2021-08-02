@@ -1,0 +1,82 @@
+public class Solution {
+    // DO NOT MODIFY THE ARGUMENTS WITH "final" PREFIX. IT IS READ ONLY
+     public int[] maxArray(int[] A)
+    {
+        int max[]=new int[1];
+        max[0]=Integer.MIN_VALUE;
+        
+        for(int i=0;i<A.length;i++)
+        {
+            if(max[0]<A[i])
+                max[0]=A[i];
+
+        }
+     return max;   
+    }
+    public Queue<Integer> populateQueue(Queue<Integer> que, int n)
+    {   
+        Queue<Integer> temp = new LinkedList();
+        
+        if(que.peek()==null)
+        {
+            que.add(n);
+            return que;
+        }
+        if(que.peek()<n)
+            que.clear(); //Delete the entire queue because all elements are smaller than the n value
+        else
+        {
+            while(que.peek()>=n)    //Place the element and remove all elements smaller than it
+                {   temp.add(que.peek());
+                    que.remove();
+                    if(que.peek()==null)
+                        break;
+                }
+            if(que.peek()!=null)
+                que.clear();
+            
+            while(temp.peek()!=null)
+            {
+                que.add(temp.peek());
+                temp.remove();
+            }
+        }
+        que.add(n);
+        
+    return que;    
+    }
+    public int[] slidingMaximum(final int[] A, int B) {
+        Queue<Integer> que = new LinkedList();
+        if(A.length<B)
+            return maxArray(A);
+        if(B==1)
+            return A;
+    int C[]=new int[A.length-B+1];
+    for(int i=0;i<B;i++)
+    {
+        if(que.peek()==null)
+            que.add(A[i]);
+        else
+            que=populateQueue(que,A[i]);
+    }
+    C[0]=que.peek();    
+
+    for(int i=1;i<=A.length-B;i++)
+    {
+        if(que.peek()==null)
+        {
+            que.add(A[i+B-1]);
+            C[i]=A[i+B-1];
+        }
+        else
+        {
+            if(A[i-1]==que.peek())
+                que.remove();
+            que=populateQueue(que,A[i+B-1]);
+            C[i]=que.peek();
+        }
+    }
+
+    return C;
+    }
+}

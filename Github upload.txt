@@ -1,0 +1,15 @@
+git init
+
+git add .
+
+git commit -m "DSA Topics and Questions"
+
+git remote add origin https://github.com/rahulgupta219/realtime_weather_app_django.git
+
+git push -u origin master
+
+git fetch origin master
+
+git remote add origin https://github.com/rahulgupta219/django_chat_app.git
+
+git remote add origin https://github.com/rahulgupta219/Java_DSA_Questions.git

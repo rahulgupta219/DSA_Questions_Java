@@ -1,140 +1,125 @@
-NQueens
+Rain Water Trapped
 Problem Description
 
-The n-queens puzzle is the problem of placing n queens on an n×n chessboard such that no two queens attack each other.
+Given a vector A of non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it is able to trap after raining.
 
-Given an integer A, return all distinct solutions to the n-queens puzzle.
-
-Each solution contains a distinct board configuration of the n-queens' placement, where 'Q' and '.' both indicate a queen and an empty space respectively.
-The final list should be generated in such a way that the indices of the queens in each list should be in reverse lexicographical order.
 
 
 Problem Constraints
-1 <= A <= 10
+1 <= |A| <= 100000
+
+
 
 Input Format
-First argument is an integer n denoting the size of chessboard
+First and only argument is the vector A
+
+
 
 Output Format
-Return an array consisting of all distinct solutions in which each element is a 2d char array representing a unique solution.
+Return one integer, the answer to the question
+
+
 
 Example Input
 Input 1:
 
-A = 4
+A = [0, 1, 0, 2]
 Input 2:
 
-A = 1
+A = [1, 2]
+
 
 Example Output
 Output 1:
 
-[
- [".Q..",  // Solution 1
-  "...Q",
-  "Q...",
-  "..Q."],
+1
+Output 2:
 
- ["..Q.",  // Solution 2
-  "Q...",
-  "...Q",
-  ".Q.."]
-]
-Output 1:
-
-[
- [Q]
-]
+0
 
 
 Example Explanation
 Explanation 1:
 
-There exist only two distinct solutions to the 4-queens puzzle:
-Explanation 1:
+1 unit is trapped on top of the 3rd element.
+Explanation 2:
 
-There exist only one distinct solutions to the 1-queens puzzle:
+No water is trapped.
+
+TC: O(N), SC: O(N)
 
 public class Solution {
+    // DO NOT MODIFY THE ARGUMENTS WITH "final" PREFIX. IT IS READ ONLY
+    public int trap(final int[] A) {
         
-    public HashSet<Integer> Column = new HashSet<Integer>();    
-    public HashSet<Integer> IMinusJ = new HashSet<Integer>();
-    public HashSet<Integer> IPlusJ = new HashSet<Integer>();
-    public ArrayList<ArrayList<String>> solution = new ArrayList<ArrayList<String>>();    
-    public int arr[][];
-    public int N;
+    int maxleft[]=new int[A.length];
+    int maxright[]=new int[A.length];  
+
+
+    int max=Integer.MIN_VALUE;
+
+    //Maxleft
+    for(int i=0;i<A.length;i++)      
+    {
+        //Calculating the maximum value on the left for each index and storing in an array
+        if(max<A[i])
+            max=A[i];
+
+        maxleft[i]=max;
+
+    }   
+
+    max=Integer.MIN_VALUE;
+    int water=0;
+    for(int i=A.length-1;i>=0;i--)      
+    {
+        //Calculating the maximum value on the right for each index and storing in an array
+        if(max<A[i])
+            max=A[i];
+
+        maxright[i]=max;
+
+        //Formula for calculating the water stored, important to subract A[i]
+      water+=Math.min(maxright[i],maxleft[i])-A[i];  
+    }    
     
-    public void addArray(){
-
-        ArrayList<String> list = new ArrayList<String>();
-        String s="";
-        for(int i=0;i<N;i++)
-        {   
-            s=""; 
-            for(int j=0;j<N;j++)
-            {
-                if(arr[i][j]==0)
-                    s+='.'; //When blank
-                else
-                    s+='Q'; //When queen is at a position
-            }
-            list.add(s);
-        }
-
-        solution.add(list);
+    return water;
     }
+}
 
-    public boolean checkPossibility(int i, int j){
+TC: O(N), SC: O(1)
 
-        //Check for Column entry
-        if(Column.contains(j))
-            return false; //Present in Column
-        if(IMinusJ.contains(i-j))
-            return false;//Present in diagonal
-        if(IPlusJ.contains(i+j))
-            return false; //Present in diagonal
+public class Solution {
+    // DO NOT MODIFY THE ARGUMENTS WITH "final" PREFIX. IT IS READ ONLY
+    public int trap(final int[] A) {
+        
+    int maxleft=A[0];
+    int maxright=A[A.length-1];  
 
-        return true;
-    }
+    //Maxleft
+    int maxi=0;
 
-    public void NQueen(int row){
-        //Base Case
-        if(row==N)
-            {
-                addArray(); //Store result in string
-                return;
-            }
+    for(int i=0;i<A.length;i++)      //Calculating the maximum element index in the array 
+        maxi=A[i]>A[maxi]?i:maxi;
 
-        //Logic
-        for(int col=0;col<N;col++)
-        {
-            if(checkPossibility(row,col))
-            {
-                //Add elements in hashset
-                Column.add(col);
-                IPlusJ.add(row+col);
-                IMinusJ.add(row-col);
+    int water=0;
 
-                //Recursion for placing another queen now
-                arr[row][col]=1;
-                NQueen(row+1);
+    //All elements to the left of maximum element, will have max element as its max right
 
-                //Remove elements from hashset and do backtracking by setting value to 0
-                arr[row][col]=0;
-                Column.remove(col);
-                IPlusJ.remove(row+col);
-                IMinusJ.remove(row-col);
-            }
-        }
-    }
+    for(int i=1;i<maxi;i++)
+    {   
+        maxleft = Math.max(maxleft,A[i]);
+        water+=Math.min(A[maxi],maxleft)-A[i];  
+    }   
 
-    public ArrayList<ArrayList<String>> solveNQueens(int A) {
+     //All elements to the right of maximum element, will have max element as its max left
+    for(int i=A.length-1;i>=maxi;i--)      
+    {
+        maxright = Math.max(maxright,A[i]);
+        water+=Math.min(A[maxi],maxright)-A[i]; 
+
+    }    
     
-    arr=new int[A][A];
-    N=A;
-
-    NQueen(0);
-
-    return solution;
+    return water;
     }
 }

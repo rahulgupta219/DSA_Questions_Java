@@ -1,81 +1,114 @@
-Single Number II
+Single Number III
 Problem Description
 
-Given an array of integers, every element appears thrice except for one which occurs once.
+Given an array of numbers A , in which exactly two elements appear only once and all the other elements appear exactly twice. Find the two elements that appear only once.
 
-Find that element which does not appear thrice.
-
-NOTE: Your algorithm should have a linear runtime complexity.
-
-Could you implement it without using extra memory?
-
+Note: Output array must be sorted.
 
 
 
 Problem Constraints
-2 <= A <= 5*106
-
-0 <= A <= INTMAX
+2 <= |A| <= 100000
+1 <= A[i] <= 109
 
 
 
 Input Format
-First and only argument of input contains an integer array A.
+First argument is an array of interger of size N.
 
 
 
 Output Format
-Return a single integer.
+Return an array of two integers that appear only once.
 
 
 
 Example Input
 Input 1:
 
- A = [1, 2, 4, 3, 3, 2, 2, 3, 1, 1]
+A = [1, 2, 3, 1, 2, 4]
 Input 2:
 
- A = [0, 0, 0, 1]
+A = [1, 2]
 
 
 Example Output
 Output 1:
 
- 4
+[3, 4]
 Output 2:
 
- 1
+[1, 2]
 
 
 Example Explanation
 Explanation 1:
 
- 4 occurs exactly once in Input 1.
- 1 occurs exactly once in Input 2.
+ 3 and 4 appear only once.
+Explanation 2:
 
+ 1 and 2 appear only once.
 
  public class Solution {
-    // DO NOT MODIFY THE LIST. IT IS READ ONLY
-    public int singleNumber(final List<Integer> A) {
-    
-    int setbits=0,no=0;
-    
-    for(int i=0;i<32;i++)
-    {
-        setbits=0; //This counter will give us the no of set bits at each position
+    public int[] solve(int[] A) {
         
-        for(int j=0;j<A.size();j++)
+        int arr[] = new int[2];
+        
+        int xorval=0;
+        
+        for(int i=0;i<A.length;i++)
+            xorval = xorval^A[i]; //Take the XOR for all elements
+        
+        int c=0,d=0;
+        int index=0;
+        
+        while(xorval>0)
         {
-            if((A.get(j) & (1<<i))>0)
-                setbits++; //Counting set bits for each no at ith position
+            if((xorval & (1<<index))>0)
+                break;
+            index++; //Calculate the index for the first set bit
         }
-    if(setbits%3!=0)     //If no of set bits are multiple of 3, that means the single element had 0, else it had 1
-    //no+=(int)(Math.pow(2,i));    
-    no=no|(1<<i);
-          
-    }
-    
-    return no;    
         
+        for(int i=0;i<A.length;i++)
+        {
+            if((A[i] & (1<<index))>0) //For each bit at that index, check if element contributes a set bit or not
+                c=c^A[i]; //Xoring the elements which contribute a set bit at index
+            else
+                d=d^A[i]; //Xoring the elements which contribute a 0 bit at index
+        }
+        arr[0]=c<d?c:d;
+        arr[1]=c+d-arr[0];
+       
+    return arr;   
+    }
+}
+
+
+public class Solution {
+    public int[] solve(int[] A) {
+        
+        int arr[] = new int[2];
+        
+        int xorval=0;
+        
+        for(int i=0;i<A.length;i++)
+            xorval = xorval^A[i]; //Take the XOR for all elements
+        
+        int c=0,d=0;
+        int mask=0;
+        
+        mask = (xorval&(xorval-1))^xorval;
+        
+        for(int i=0;i<A.length;i++)
+        {
+            if((A[i] & mask)>0) //For each bit at that index, check if element contributes a set bit or not
+                c=c^A[i]; //Xoring the elements which contribute a set bit at index
+            else
+                d=d^A[i]; //Xoring the elements which contribute a 0 bit at index
+        }
+        arr[0]=c<d?c:d;
+        arr[1]=c+d-arr[0];
+       
+    return arr;   
     }
 }
